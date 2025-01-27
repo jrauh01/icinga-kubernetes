@@ -1,0 +1,13 @@
+# Start only these clusters automatically via init script.
+# Allowed values are "all", "none" or a space separated list 
+# of names of the clusters. If empty, "all" is assumed.
+# The cluster name refers to the cluster environment file name.
+# i.e. "cluster1" would be /etc/icinga-kubernetes/cluster1.env
+#
+# Changing this variable will require running "systemctl daemon-reload" 
+# followed by a restart of the icinga-kubernetes service (if you 
+# removed entries you may have to stop those manually)
+#
+#AUTOSTART="all"
+#AUTOSTART="none"
+#AUTOSTART="cluster1 cluster2"

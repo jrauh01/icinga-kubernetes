@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# This systemd generator creates dependency symlinks that make all icinga-kubernetes 
+# cluster instances listed in /etc/default/icinga-kubernetes's AUTOSTART be started/stopped/reloaded
+# when icinga-kubernetes.service is started/stopped/reloaded.
+
+set -eu
+
+WANTDIR="$1/icinga-kubernetes.service.wants"
+SERVICEFILE="/lib/systemd/system/icinga-kubernetes@.service"
+AUTOSTART="all"
+CONFIG_DIR=/etc/icinga-kubernetes
+
+if [[ ! -d "$WANTDIR" ]]; then
+  mkdir -p "$WANTDIR"
+fi
+
+if [[ -e /etc/default/icinga-kubernetes ]]; then
+  source /etc/default/icinga-kubernetes
+fi
+
+if [[ "$AUTOSTART" == "none" ]]; then
+  exit 0
+fi
+
+if [[ "$AUTOSTART" == "all" || -z "$AUTOSTART" ]]; then
+	for CONFIG in $(cd $CONFIG_DIR; ls *.env 2> /dev/null); do
+    NAME=${CONFIG%%.env}
+    ln -s "$SERVICEFILE" "$WANTDIR/icinga-kubernetes@$NAME.service"
+  done
+else
+  for NAME in $AUTOSTART ; do
+    if [[ -e "${CONFIG_DIR}/${NAME}.env" ]]; then
+      ln -s "$SERVICEFILE" "$WANTDIR/icinga-kubernetes@$NAME.service"
+    fi
+  done
+fi
+
+exit 0
+
