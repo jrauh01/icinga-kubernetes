@@ -1,0 +1,17 @@
+[Unit]
+Description=Icinga for Kubernetes (%i)
+PartOf=icinga-kubernetes.service
+After=syslog.target network-online.target mariadb.service postgresql.service
+
+[Service]
+Type=simple
+WorkingDirectory=/etc/icinga-kubernetes
+Environment="ICINGA_FOR_KUBERNETES_CLUSTER_NAME=%i"
+EnvironmentFile=/etc/icinga-kubernetes/%i.env
+ExecStartPre=/bin/echo "$ICINGA_FOR_KUBERNETES_CLUSTER_NAME" 
+ExecStart=/usr/sbin/icinga-kubernetes --config /etc/icinga-kubernetes/config.yml --cluster-name ${ICINGA_FOR_KUBERNETES_CLUSTER_NAME}
+User=icinga-kubernetes
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

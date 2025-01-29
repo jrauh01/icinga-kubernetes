@@ -1,0 +1,12 @@
+[Unit]
+Description=Icinga for Kubernetes
+After=syslog.target network-online.target mariadb.service postgresql.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/bin/true
+WorkingDirectory=/etc/icinga-kubernetes
+
+[Install]
+WantedBy=multi-user.target
